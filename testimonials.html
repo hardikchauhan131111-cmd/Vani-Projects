@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Testimonials - वाणी</title>
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif
+    }
+
+    :root {
+      --primary: #ff8c42;
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --card-bg: #f8f9fa;
+      --border: #e0e0e0
+    }
+
+    [data-theme="dark"] {
+      --primary: #ff8c42;
+      --bg: #1a1a1a;
+      --text: #ffffff;
+      --card-bg: #2d2d2d;
+      --border: #404040
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh
+    }
+
+    header {
+      background: var(--card-bg);
+      border-bottom: 2px solid var(--border);
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px
+    }
+
+    .logo-section img {
+      height: 50px
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px
+    }
+
+    h1 {
+      color: var(--primary);
+      margin-bottom: 30px;
+      font-size: 32px;
+      text-align: center
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+      margin-top: 40px
+    }
+
+    .review-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+      transition: all 0.3s
+    }
+
+    .review-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1)
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px
+    }
+
+    .customer-name {
+      font-weight: 700;
+      font-size: 18px
+    }
+
+    .stars {
+      color: #fbbf24;
+      font-size: 18px
+    }
+
+    .review-text {
+      line-height: 1.6;
+      opacity: 0.9;
+      font-size: 14px;
+      margin-bottom: 15px
+    }
+
+    .review-date {
+      font-size: 12px;
+      opacity: 0.6
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      opacity: 0.6
+    }
+
+    .empty-state-icon {
+      font-size: 80px;
+      margin-bottom: 20px
+    }
+
+    .write-review-section {
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 40px;
+      text-align: center;
+      display: none;
+      animation: slideDown 0.4s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+      cursor: pointer;
+    }
+
+    .star-rating span {
+      font-size: 35px;
+      color: #ddd;
+      transition: color 0.2s;
+    }
+
+    .star-rating span.active {
+      color: #fbbf24;
+    }
+
+    .review-textarea {
+      width: 100%;
+      padding: 15px;
+      background: var(--bg);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      min-height: 100px;
+      font-family: inherit;
+    }
+
+    .review-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn-submit-review {
+      background: var(--primary);
+      color: #fff;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-write-review {
+      background: var(--primary);
+      color: #fff;
+      padding: 12px 25px;
+      border-radius: 50px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+    }
+
+    footer {
+      background: var(--card-bg);
+      border-top: 2px solid var(--border);
+      text-align: center;
+      padding: 20px;
+      margin-top: 60px;
+      font-size: 14px;
+      opacity: 0.7
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="vanilogo.png" alt="वाणी">
+      <div>
+        <h1 style="font-size:20px;color:var(--primary)">वाणी</h1>
+        <p style="font-size:12px;opacity:0.7">The Sound of Hard Work</p>
+      </div>
+    </div>
+    <a href="home.html" style="color:var(--text);text-decoration:none;font-weight:600">← Dashboard</a>
+  </header>
+
+  <div class="container">
+    <h1>⭐ Customer Testimonials</h1>
+    <p style="text-align:center;opacity:0.8;margin-bottom:20px">See what our customers are saying about us</p>
+
+    <div style="text-align: center;">
+      <button class="btn-write-review" id="toggleReviewBtn">✍️ Write a Review</button>
+    </div>
+
+    <div id="reviewBox" class="write-review-section">
+      <h2 style="font-size: 20px; margin-bottom: 10px; color: var(--primary);">Tell us how we did!</h2>
+      <div class="star-rating" id="ratingContainer">
+        <span data-val="1">★</span>
+        <span data-val="2">★</span>
+        <span data-val="3">★</span>
+        <span data-val="4">★</span>
+        <span data-val="5">★</span>
+      </div>
+      <textarea class="review-textarea" id="reviewComment"
+        placeholder="Share your experience here... (Optional)"></textarea>
+      <button class="btn-submit-review" id="submitReviewBtn">Submit My Review</button>
+    </div>
+
+    <div id="reviewsContainer" class="reviews-grid">
+      <div class="empty-state">
+        <div class="empty-state-icon">🔄</div>
+        <p>Loading reviews...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 वाणी - The Sound of Hard Work | Contact: angadchauhan131111@gmail.com | +91 9917406009
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, getDocs, limit, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D_7UIxAP1AUs",
+      authDomain: "vani-94815.firebaseapp.com",
+      projectId: "vani-94815",
+      storageBucket: "vani-94815.firebasestorage.app",
+      messagingSenderId: "754007126468",
+      appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+      measurementId: "G-1HN0RZKWF5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    if (!user) window.location.href = 'index.html';
+
+    async function loadReviews() {
+      const container = document.getElementById('reviewsContainer');
+      try {
+        const reviewsRef = collection(db, 'reviews');
+        const q = query(reviewsRef, orderBy('createdAt', 'desc'), limit(50));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📝</div>
+              <p>No reviews yet. Be the first to leave a review!</p>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+          const review = doc.data();
+          const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+          const date = review.createdAt ? new Date(review.createdAt.seconds * 1000).toLocaleDateString('en-IN') : 'Recent';
+
+          const reviewCard = document.createElement('div');
+          reviewCard.className = 'review-card';
+          reviewCard.innerHTML = `
+            <div class="review-header">
+              <div class="customer-name">${review.customerName}</div>
+              <div class="stars">${stars}</div>
+            </div>
+            <div class="review-text">${review.review || 'No comments provided.'}</div>
+            <div class="review-date">${date}</div>`;
+          container.appendChild(reviewCard);
+        });
+      } catch (error) {
+        console.error('Load reviews error:', error);
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <p>Failed to load reviews. Please try again later.</p>
+          </div>`;
+      }
+    }
+
+    loadReviews();
+
+    let userRating = 0;
+    document.querySelectorAll('#ratingContainer span').forEach(star => {
+      star.addEventListener('click', function () {
+        userRating = parseInt(this.getAttribute('data-val'));
+        document.querySelectorAll('#ratingContainer span').forEach((s, idx) => {
+          if (idx < userRating) s.classList.add('active');
+          else s.classList.remove('active');
+        });
+      });
+    });
+
+    document.getElementById('toggleReviewBtn').addEventListener('click', () => {
+      const box = document.getElementById('reviewBox');
+      box.style.display = box.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.getElementById('submitReviewBtn').addEventListener('click', async () => {
+      if (userRating === 0) {
+        alert('Please select a star rating first! ⭐');
+        return;
+      }
+
+      const btn = document.getElementById('submitReviewBtn');
+      const comment = document.getElementById('reviewComment').value.trim();
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      try {
+        await addDoc(collection(db, 'reviews'), {
+          customerName: user.fullName || 'Verified User',
+          rating: userRating,
+          review: comment,
+          userId: user.userId || 'guest',
+          createdAt: serverTimestamp()
+        });
+
+        alert('✅ Review posted successfully!');
+        document.getElementById('reviewBox').style.display = 'none';
+        document.getElementById('reviewComment').value = '';
+        userRating = 0;
+        document.querySelectorAll('#ratingContainer span').forEach(s => s.classList.remove('active'));
+        loadReviews();
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        alert('Failed to submit review. Please check your connection.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit My Review';
+      }
+    });
+
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  </script>
+</body>
+
+</html>

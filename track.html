@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Track Order - वाणी</title>
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",sans-serif}
+    :root{--primary:#ff8c42;--bg:#ffffff;--text:#1a1a1a;--card-bg:#f8f9fa;--border:#e0e0e0}
+    [data-theme="dark"]{--primary:#ff8c42;--bg:#1a1a1a;--text:#ffffff;--card-bg:#2d2d2d;--border:#404040}
+    body{background:var(--bg);color:var(--text);min-height:100vh}
+    header{background:var(--card-bg);border-bottom:2px solid var(--border);padding:16px 30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .logo-section{display:flex;align-items:center;gap:15px}
+    .logo-section img{height:50px}
+    .container{max-width:800px;margin:40px auto;padding:0 20px}
+    .track-box{background:var(--card-bg);border:2px solid var(--border);border-radius:16px;padding:40px;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+    h2{color:var(--primary);margin-bottom:20px}
+    label{display:block;margin-top:16px;font-weight:600;font-size:14px;margin-bottom:8px}
+    input{width:100%;padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg);color:var(--text)}
+    input:focus{outline:none;border-color:var(--primary)}
+    .btn-track{background:var(--primary);color:#fff;padding:14px;border:none;border-radius:10px;font-weight:600;font-size:16px;cursor:pointer;width:100%;margin-top:20px}
+    .btn-track:hover{background:#ff7a2e}
+    .btn-track:disabled{opacity:0.5;cursor:not-allowed}
+    .result{margin-top:30px;padding:20px;background:var(--bg);border:2px solid var(--primary);border-radius:10px;display:none}
+    .result h3{margin-bottom:15px;color:var(--primary)}
+    .detail-row{margin-bottom:12px;font-size:14px;display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+    .detail-row:last-child{border-bottom:none}
+    .status-badge{display:inline-block;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600}
+    .status-pending{background:#fef3c7;color:#92400e}
+    .status-progress{background:#dbeafe;color:#1e40af}
+    .status-done{background:#d1fae5;color:#065f46}
+    .action-buttons{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+    .btn-action{padding:10px 20px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;border:none;text-decoration:none;display:inline-block;text-align:center}
+    .btn-review{background:var(--primary);color:#fff}
+    .btn-edit{background:var(--bg);color:var(--text);border:2px solid var(--border)}
+    .error{margin-top:20px;padding:12px;border-radius:10px;background:#fee;border-left:4px solid #c00;color:#900;display:none}
+    .review-form{margin-top:20px;padding:20px;background:var(--bg);border:2px solid var(--border);border-radius:10px;display:none}
+    .review-form textarea{width:100%;padding:12px;border:2px solid var(--border);border-radius:10px;min-height:80px;margin-top:10px;background:var(--bg);color:var(--text);font-family:inherit}
+    .star-rating{display:flex;gap:8px;font-size:32px;margin:10px 0;cursor:pointer}
+    .star{color:#ddd;transition:color 0.2s}
+    .star.active{color:#fbbf24}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="vanilogo.png" alt="वाणी">
+      <div>
+        <h1 style="font-size:20px;color:var(--primary)">वाणी</h1>
+        <p style="font-size:12px;opacity:0.7">Track Your Order</p>
+      </div>
+    </div>
+    <a href="home.html" style="color:var(--text);text-decoration:none;font-weight:600">← Dashboard</a>
+  </header>
+
+  <div class="container">
+    <div class="track-box">
+      <h2>🔍 Track Your Order</h2>
+      <p style="opacity:0.7;font-size:14px">Enter your Order ID to check status</p>
+
+      <label>Order ID *</label>
+      <input type="text" id="orderId" placeholder="e.g., VAN12345678">
+
+      <button class="btn-track" id="trackBtn" onclick="trackOrder()">Track Order</button>
+
+      <div id="result" class="result"></div>
+      <div id="error" class="error"></div>
+
+      <div id="reviewForm" class="review-form">
+        <h3 style="margin-bottom:10px">⭐ Rate Your Experience</h3>
+        <div class="star-rating" id="starRating">
+          <span class="star" data-rating="1" onclick="setRating(1)">★</span>
+          <span class="star" data-rating="2" onclick="setRating(2)">★</span>
+          <span class="star" data-rating="3" onclick="setRating(3)">★</span>
+          <span class="star" data-rating="4" onclick="setRating(4)">★</span>
+          <span class="star" data-rating="5" onclick="setRating(5)">★</span>
+        </div>
+        <textarea id="reviewText" placeholder="Share your experience with us..."></textarea>
+        <button class="btn-track" style="margin-top:15px" onclick="submitReview()">Submit Review</button>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D_7UIxAP1AUs",
+  authDomain: "vani-94815.firebaseapp.com",
+  projectId: "vani-94815",
+  storageBucket: "vani-94815.firebasestorage.app",
+  messagingSenderId: "754007126468",
+  appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+  measurementId: "G-1HN0RZKWF5"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+if(!user) window.location.href = 'index.html';
+
+let currentOrderId = '';
+let selectedRating = 0;
+
+window.trackOrder = async function(){
+  const orderId = document.getElementById('orderId').value.trim();
+  const resultDiv = document.getElementById('result');
+  const errorDiv = document.getElementById('error');
+  const trackBtn = document.getElementById('trackBtn');
+
+  resultDiv.style.display = 'none';
+  errorDiv.style.display = 'none';
+
+  if(!orderId){
+    errorDiv.textContent = 'Please enter Order ID';
+    errorDiv.style.display = 'block';
+    return;
+  }
+
+  trackBtn.disabled = true;
+  trackBtn.textContent = 'Searching...';
+
+  try {
+    const ordersRef = collection(db, 'orders');
+    const q = query(ordersRef, where('orderId', '==', orderId));
+    const snapshot = await getDocs(q);
+
+    if(snapshot.empty){
+      errorDiv.textContent = 'Order not found. Please check your Order ID.';
+      errorDiv.style.display = 'block';
+      trackBtn.disabled = false;
+      trackBtn.textContent = 'Track Order';
+      return;
+    }
+
+    const orderData = snapshot.docs[0].data();
+    currentOrderId = orderId;
+
+    const statusClass = orderData.status === 'Pending' ? 'status-pending' : 
+                        orderData.status === 'In Progress' ? 'status-progress' : 'status-done';
+
+    let html = `
+      <h3>Order Found!</h3>
+      <div class="detail-row"><strong>Order ID:</strong> <span>${orderData.orderId}</span></div>
+      <div class="detail-row"><strong>Service:</strong> <span>${orderData.sector}</span></div>
+      <div class="detail-row"><strong>Quality:</strong> <span>${orderData.quality}</span></div>
+      <div class="detail-row"><strong>Total Amount:</strong> <span>₹${orderData.totalAmount}</span></div>
+      <div class="detail-row"><strong>Status:</strong> <span class="status-badge ${statusClass}">${orderData.status}</span></div>
+      <div class="detail-row"><strong>Expected Delivery:</strong> <span>${orderData.expectedDelivery}</span></div>
+    `;
+
+    if(orderData.adminNotes){
+      html += `<div class="detail-row"><strong>Admin Notes:</strong> <span>${orderData.adminNotes}</span></div>`;
+    }
+
+    html += `<div class="action-buttons">`;
+    
+    if(orderData.status === 'Order Done'){
+      html += `<button class="btn-action btn-review" onclick="showReviewForm()">⭐ Write Review</button>`;
+    }
+    
+    const editSubject = encodeURIComponent(`Edit Request - Order ${orderId}`);
+    const editBody = encodeURIComponent(`Hi वाणी Team,\n\nI would like to request edits for my order ${orderId}.\n\nChanges needed:\n\n\nThank you!`);
+    html += `<a href="mailto:angadchauhan131111@gmail.com?subject=${editSubject}&body=${editBody}" class="btn-action btn-edit">✏️ Request Edit</a>`;
+    
+    html += `</div>`;
+
+    resultDiv.innerHTML = html;
+    resultDiv.style.display = 'block';
+    trackBtn.disabled = false;
+    trackBtn.textContent = 'Track Order';
+
+  } catch(error){
+    console.error('Track error:', error);
+    errorDiv.textContent = 'Error tracking order. Please try again.';
+    errorDiv.style.display = 'block';
+    trackBtn.disabled = false;
+    trackBtn.textContent = 'Track Order';
+  }
+};
+
+window.showReviewForm = function(){
+  document.getElementById('reviewForm').style.display = 'block';
+  document.getElementById('reviewForm').scrollIntoView({behavior: 'smooth'});
+};
+
+window.setRating = function(rating){
+  selectedRating = rating;
+  const stars = document.querySelectorAll('.star');
+  stars.forEach((star, index) => {
+    if(index < rating){
+      star.classList.add('active');
+    } else {
+      star.classList.remove('active');
+    }
+  });
+};
+
+window.submitReview = async function(){
+  const reviewText = document.getElementById('reviewText').value.trim();
+  
+  if(selectedRating === 0){
+    alert('Please select a rating');
+    return;
+  }
+
+  try {
+    const reviewsRef = collection(db, 'reviews');
+    await addDoc(reviewsRef, {
+      orderId: currentOrderId,
+      userId: user.userId,
+      customerName: user.fullName,
+      rating: selectedRating,
+      review: reviewText,
+      createdAt: serverTimestamp()
+    });
+
+    alert('✅ Thank you for your review!');
+    document.getElementById('reviewForm').style.display = 'none';
+    selectedRating = 0;
+    document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+    document.getElementById('reviewText').value = '';
+
+  } catch(error){
+    console.error('Review error:', error);
+    alert('Failed to submit review. Please try again.');
+  }
+};
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('theme') === 'dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+});
+</script>
+</body>
+</html>

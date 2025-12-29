@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - वाणी</title>
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",sans-serif}
+    :root{--primary:#ff8c42;--bg:#ffffff;--text:#1a1a1a;--card-bg:#f8f9fa;--border:#e0e0e0}
+    [data-theme="dark"]{--primary:#ff8c42;--bg:#1a1a1a;--text:#ffffff;--card-bg:#2d2d2d;--border:#404040}
+    body{background:var(--bg);color:var(--text);min-height:100vh}
+    header{background:var(--card-bg);border-bottom:2px solid var(--border);padding:16px 30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .logo-section{display:flex;align-items:center;gap:15px}
+    .logo-section img{height:50px}
+    .btn-logout{background:transparent;border:2px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--text)}
+    .btn-logout:hover{border-color:var(--primary);color:var(--primary)}
+    .container{max-width:1400px;margin:40px auto;padding:0 20px}
+    h1{color:var(--primary);margin-bottom:30px}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:40px}
+    .stat-card{background:var(--card-bg);border:2px solid var(--border);border-radius:12px;padding:25px;text-align:center}
+    .stat-number{font-size:42px;font-weight:700;color:var(--primary);margin-bottom:8px}
+    .stat-label{font-size:14px;opacity:0.7}
+    .orders-section{background:var(--card-bg);border:2px solid var(--border);border-radius:16px;padding:30px}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
+    th,td{text-align:left;padding:12px;border-bottom:1px solid var(--border);font-size:14px}
+    th{background:rgba(255,140,66,0.1);font-weight:600}
+    .status-badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+    .status-pending{background:#fef3c7;color:#92400e}
+    .status-progress{background:#dbeafe;color:#1e40af}
+    .status-done{background:#d1fae5;color:#065f46}
+    .btn-view{background:var(--primary);color:#fff;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:12px}
+    .btn-view:hover{background:#ff7a2e}
+    .loading{text-align:center;padding:40px;opacity:0.7}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="vanilogo.png" alt="वाणी">
+      <div>
+        <h1 style="font-size:20px;color:var(--primary)">Admin Dashboard</h1>
+        <p style="font-size:12px;opacity:0.7" id="adminName">Welcome, Admin</p>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </header>
+
+  <div class="container">
+    <h1>📊 Order Management</h1>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="totalOrders">0</div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="pendingOrders">0</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="progressOrders">0</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="doneOrders">0</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+
+    <div class="orders-section">
+      <h2 style="margin-bottom:15px;color:var(--primary)">All Orders</h2>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Service</th>
+              <th>Quality</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr><td colspan="8" class="loading">Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D_7UIxAP1AUs",
+  authDomain: "vani-94815.firebaseapp.com",
+  projectId: "vani-94815",
+  storageBucket: "vani-94815.firebasestorage.app",
+  messagingSenderId: "754007126468",
+  appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+  measurementId: "G-1HN0RZKWF5"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const admin = sessionStorage.getItem('adminLoggedIn');
+if(!admin){
+  window.location.href = 'admin-login.html';
+} else {
+  const adminFirstName = admin.split('@')[0];
+  document.getElementById('adminName').textContent = `Welcome, ${adminFirstName}`;
+}
+
+window.logout = function(){
+  sessionStorage.removeItem('adminLoggedIn');
+  window.location.href = 'admin-login.html';
+};
+
+async function loadOrders(){
+  try {
+    const ordersRef = collection(db, 'orders');
+    const q = query(ordersRef, orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+
+    const orders = [];
+    snapshot.forEach(doc => {
+      orders.push({ id: doc.id, ...doc.data() });
+    });
+
+    document.getElementById('totalOrders').textContent = orders.length;
+    document.getElementById('pendingOrders').textContent = orders.filter(o => o.status === 'Pending').length;
+    document.getElementById('progressOrders').textContent = orders.filter(o => o.status === 'In Progress').length;
+    document.getElementById('doneOrders').textContent = orders.filter(o => o.status === 'Order Done').length;
+
+    const tbody = document.getElementById('ordersBody');
+    if(orders.length === 0){
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;opacity:0.6">No orders yet</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = orders.map(order => {
+      const statusClass = order.status === 'Pending' ? 'status-pending' : 
+                          order.status === 'In Progress' ? 'status-progress' : 'status-done';
+      const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('en-IN') : 'N/A';
+      
+      return `
+        <tr>
+          <td><strong>${order.orderId}</strong></td>
+          <td>${order.customerName}</td>
+          <td>${order.sector}</td>
+          <td>${order.quality}</td>
+          <td>₹${order.totalAmount}</td>
+          <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+          <td>${date}</td>
+          <td><button class="btn-view" onclick="viewOrder('${order.id}')">View</button></td>
+        </tr>
+      `;
+    }).join('');
+
+  } catch(error){
+    console.error('Load orders error:', error);
+    document.getElementById('ordersBody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#dc2626">Error loading orders</td></tr>';
+  }
+}
+
+window.viewOrder = function(docId){
+  window.location.href = 'admin-order.html?id=' + docId;
+};
+
+loadOrders();
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('theme') === 'dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+});
+</script>
+</body>
+</html>

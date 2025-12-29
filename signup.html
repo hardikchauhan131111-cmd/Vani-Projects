@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <title>Sign Up - वाणी</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif
+    }
+
+    :root {
+      --primary: #ff8c42;
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --card-bg: #f8f9fa;
+      --border: #e0e0e0
+    }
+
+    [data-theme="dark"] {
+      --primary: #ff8c42;
+      --bg: #1a1a1a;
+      --text: #ffffff;
+      --card-bg: #2d2d2d;
+      --border: #404040
+    }
+
+    body {
+      background: linear-gradient(135deg, rgba(255, 140, 66, 0.1) 0%, rgba(255, 140, 66, 0.05) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: var(--text);
+      transition: all 0.3s
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      z-index: 1000
+    }
+
+    .signup-box {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1)
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px
+    }
+
+    .logo img {
+      width: 120px;
+      height: auto
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: var(--primary)
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.7;
+      margin-bottom: 30px
+    }
+
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.3s
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary)
+    }
+
+    .btn-signup {
+      background: var(--primary);
+      color: #fff;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      transition: all 0.3s
+    }
+
+    .btn-signup:hover {
+      background: #ff7a2e;
+      transform: scale(1.02)
+    }
+
+    .btn-signup:disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+
+    .error,
+    .success {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none
+    }
+
+    .error {
+      background: #fee;
+      border-left: 4px solid #c00;
+      color: #900
+    }
+
+    .success {
+      background: #efe;
+      border-left: 4px solid #0c0;
+      color: #060
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px
+    }
+
+    .links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600
+    }
+
+    .links a:hover {
+      text-decoration: underline
+    }
+  </style>
+</head>
+
+<body>
+  <div class="theme-toggle" onclick="toggleTheme()">
+    <span id="themeIcon">🌙</span>
+  </div>
+
+  <div class="signup-box">
+    <div class="logo">
+      <img src="vanilogo.png" alt="Vani">
+    </div>
+
+    <h2>Create Your Account</h2>
+    <p class="subtitle">Join वाणी - The Sound of Hard Work</p>
+
+    <form id="signupForm">
+      <label>Full Name *</label>
+      <input type="text" id="fullName" required placeholder="Enter your full name">
+
+      <label>Email *</label>
+      <input type="email" id="email" required placeholder="your@email.com">
+
+      <label>Phone Number *</label>
+      <input type="tel" id="phone" pattern="[0-9]{10}" required placeholder="10-digit mobile number">
+
+      <label>Password *</label>
+      <input type="password" id="password" minlength="6" required placeholder="Minimum 6 characters">
+
+      <label>Confirm Password *</label>
+      <input type="password" id="confirmPassword" minlength="6" required placeholder="Re-enter password">
+
+      <button type="submit" class="btn-signup" id="signupBtn">Create Account</button>
+    </form>
+
+    <div id="error" class="error"></div>
+    <div id="success" class="success"></div>
+
+    <div class="links">
+      Already have an account? <a href="login.html">Login</a><br>
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('themeIcon');
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.removeAttribute('data-theme');
+        icon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        icon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('themeIcon').textContent = '☀️';
+      }
+    });
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D_7UIxAP1AUs",
+      authDomain: "vani-94815.firebaseapp.com",
+      projectId: "vani-94815",
+      storageBucket: "vani-94815.firebasestorage.app",
+      messagingSenderId: "754007126468",
+      appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+      measurementId: "G-1HN0RZKWF5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    emailjs.init("u-zSNAj75yGh3KqKI");
+
+    function showError(msg) {
+      document.getElementById('error').textContent = msg;
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('success').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      document.getElementById('success').textContent = msg;
+      document.getElementById('success').style.display = 'block';
+      document.getElementById('error').style.display = 'none';
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const signupBtn = document.getElementById('signupBtn');
+
+      if (password !== confirmPassword) {
+        showError('Passwords do not match.');
+        return;
+      }
+
+      signupBtn.disabled = true;
+      signupBtn.textContent = 'Creating account...';
+
+      try {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('email', '==', email));
+        const existingUser = await getDocs(q);
+
+        if (!existingUser.empty) {
+          showError('Email already registered. Please login.');
+          signupBtn.disabled = false;
+          signupBtn.textContent = 'Create Account';
+          return;
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        const now = new Date();
+        const expiryTime = new Date(now.getTime() + 15 * 60000);
+        const expiryString = expiryTime.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+
+        sessionStorage.setItem('pendingUser', JSON.stringify({
+          fullName, email, phone, password, otp
+        }));
+
+        await emailjs.send('service_fj4j8cp', 'template_iwxwqx8', {
+          to_email: email,
+          otp: otp,
+          user_name: fullName,
+          time: expiryString
+        });
+
+        showSuccess('OTP sent to your email! Redirecting to verification...');
+        setTimeout(() => {
+          window.location.href = 'verify.html';
+        }, 2000);
+
+      } catch (error) {
+        console.error('Signup error:', error);
+        showError('Failed to create account. Please try again.');
+        signupBtn.disabled = false;
+        signupBtn.textContent = 'Create Account';
+      }
+    });
+  </script>
+</body>
+
+</html>

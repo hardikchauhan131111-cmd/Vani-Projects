@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <title>Verify OTP - वाणी</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif
+    }
+
+    :root {
+      --primary: #ff8c42;
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --card-bg: #f8f9fa;
+      --border: #e0e0e0
+    }
+
+    [data-theme="dark"] {
+      --primary: #ff8c42;
+      --bg: #1a1a1a;
+      --text: #ffffff;
+      --card-bg: #2d2d2d;
+      --border: #404040
+    }
+
+    body {
+      background: linear-gradient(135deg, rgba(255, 140, 66, 0.1) 0%, rgba(255, 140, 66, 0.05) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: var(--text)
+    }
+
+    .verify-box {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1)
+    }
+
+    .logo img {
+      width: 100px;
+      margin-bottom: 20px
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 10px
+    }
+
+    .email-display {
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 10px;
+      margin: 20px 0;
+      font-weight: 600;
+      border: 2px solid var(--border)
+    }
+
+    .otp-input {
+      width: 100%;
+      padding: 16px;
+      font-size: 24px;
+      text-align: center;
+      letter-spacing: 10px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      margin: 20px 0;
+      background: var(--bg);
+      color: var(--text)
+    }
+
+    .otp-input:focus {
+      outline: none;
+      border-color: var(--primary)
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all 0.3s
+    }
+
+    .btn-verify {
+      background: var(--primary);
+      color: #fff
+    }
+
+    .btn-verify:hover {
+      background: #ff7a2e
+    }
+
+    .btn-verify:disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+
+    .btn-resend {
+      background: var(--bg);
+      color: var(--text);
+      border: 2px solid var(--border)
+    }
+
+    .btn-resend:hover {
+      border-color: var(--primary)
+    }
+
+    .btn-resend:disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+
+    .timer {
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: 0.7
+    }
+
+    .error,
+    .success {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none
+    }
+
+    .error {
+      background: #fee;
+      border-left: 4px solid #c00;
+      color: #900
+    }
+
+    .success {
+      background: #efe;
+      border-left: 4px solid #0c0;
+      color: #060
+    }
+  </style>
+</head>
+
+<body>
+  <div class="verify-box">
+    <div class="logo">
+      <img src="vanilogo.png" alt="वाणी">
+    </div>
+
+    <h2>📧 Verify Your Email</h2>
+    <p style="opacity:0.7;font-size:14px">Enter the 6-digit OTP sent to:</p>
+    <div class="email-display" id="emailDisplay">Loading...</div>
+
+    <input type="text" id="otpInput" class="otp-input" maxlength="6" placeholder="000000" autocomplete="off">
+
+    <button class="btn btn-verify" id="verifyBtn" onclick="verifyOTP()">Verify OTP</button>
+    <button class="btn btn-resend" id="resendBtn" onclick="resendOTP()" disabled>Resend OTP</button>
+
+    <div class="timer" id="timer"></div>
+
+    <div id="error" class="error"></div>
+    <div id="success" class="success"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D_7UIxAP1AUs",
+      authDomain: "vani-94815.firebaseapp.com",
+      projectId: "vani-94815",
+      storageBucket: "vani-94815.firebasestorage.app",
+      messagingSenderId: "754007126468",
+      appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+      measurementId: "G-1HN0RZKWF5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    emailjs.init("u-zSNAj75yGh3KqKI");
+
+    const pendingUser = JSON.parse(sessionStorage.getItem('pendingUser'));
+    if (!pendingUser) {
+      window.location.href = 'signup.html';
+    }
+
+    document.getElementById('emailDisplay').textContent = pendingUser.email;
+
+    let timerInterval;
+    let resendTimer = 30;
+
+    function startTimer() {
+      const timerDiv = document.getElementById('timer');
+      const resendBtn = document.getElementById('resendBtn');
+      resendBtn.disabled = true;
+      resendTimer = 30;
+
+      timerInterval = setInterval(() => {
+        resendTimer--;
+        timerDiv.textContent = `Resend available in ${resendTimer}s`;
+
+        if (resendTimer <= 0) {
+          clearInterval(timerInterval);
+          timerDiv.textContent = '';
+          resendBtn.disabled = false;
+        }
+      }, 1000);
+    }
+
+    startTimer();
+
+    function showError(msg) {
+      document.getElementById('error').textContent = msg;
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('success').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      document.getElementById('success').textContent = msg;
+      document.getElementById('success').style.display = 'block';
+      document.getElementById('error').style.display = 'none';
+    }
+
+    window.verifyOTP = async function () {
+      const otp = document.getElementById('otpInput').value.trim();
+      const verifyBtn = document.getElementById('verifyBtn');
+
+      if (!/^\d{6}$/.test(otp)) {
+        showError('Please enter a valid 6-digit OTP.');
+        return;
+      }
+
+      if (otp !== pendingUser.otp) {
+        showError('Incorrect OTP. Please try again.');
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying...';
+
+      try {
+        const usersRef = collection(db, 'users');
+        const userDoc = await addDoc(usersRef, {
+          fullName: pendingUser.fullName,
+          email: pendingUser.email,
+          phone: pendingUser.phone,
+          password: pendingUser.password,
+          verified: true,
+          createdAt: serverTimestamp()
+        });
+
+        sessionStorage.setItem('loggedInUser', JSON.stringify({
+          userId: userDoc.id,
+          fullName: pendingUser.fullName,
+          email: pendingUser.email,
+          phone: pendingUser.phone
+        }));
+        sessionStorage.removeItem('pendingUser');
+
+        showSuccess('✓ Verified! Redirecting to dashboard...');
+        setTimeout(() => {
+          window.location.href = 'home.html';
+        }, 2000);
+
+      } catch (error) {
+        console.error('Verification error:', error);
+        showError('Failed to verify. Please try again.');
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify OTP';
+      }
+    };
+
+    window.resendOTP = async function () {
+      const resendBtn = document.getElementById('resendBtn');
+      resendBtn.disabled = true;
+
+      try {
+        const newOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        pendingUser.otp = newOTP;
+        sessionStorage.setItem('pendingUser', JSON.stringify(pendingUser));
+
+        const now = new Date();
+        const expiryTime = new Date(now.getTime() + 15 * 60000);
+        const expiryString = expiryTime.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+
+        await emailjs.send('service_fj4j8cp', 'template_iwxwqx8', {
+          to_email: pendingUser.email,
+          otp: newOTP,
+          user_name: pendingUser.fullName,
+          time: expiryString
+        });
+
+        showSuccess('New OTP sent to your email!');
+        startTimer();
+      } catch (error) {
+        console.error('Resend error:', error);
+        showError('Failed to resend OTP.');
+        resendBtn.disabled = false;
+      }
+    };
+
+    document.getElementById('otpInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') verifyOTP();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Order - वाणी Admin</title>
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif
+    }
+
+    :root {
+      --primary: #ff8c42;
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --card-bg: #f8f9fa;
+      --border: #e0e0e0
+    }
+
+    [data-theme="dark"] {
+      --primary: #ff8c42;
+      --bg: #1a1a1a;
+      --text: #ffffff;
+      --card-bg: #2d2d2d;
+      --border: #404040
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh
+    }
+
+    header {
+      background: var(--card-bg);
+      border-bottom: 2px solid var(--border);
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px
+    }
+
+    .logo-section img {
+      height: 50px
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px
+    }
+
+    .order-details {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08)
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 30px
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 30px
+    }
+
+    .detail-item {
+      padding: 15px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px
+    }
+
+    .detail-label {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 5px
+    }
+
+    .detail-value {
+      font-weight: 600;
+      font-size: 16px
+    }
+
+    .admin-section {
+      border-top: 2px solid var(--border);
+      padding-top: 30px;
+      margin-top: 30px
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 8px
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+      flex-wrap: wrap
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none
+    }
+
+    .btn-update {
+      background: var(--primary);
+      color: #fff
+    }
+
+    .btn-update:hover {
+      background: #ff7a2e
+    }
+
+    .btn-delete {
+      background: #dc2626;
+      color: #fff
+    }
+
+    .btn-delete:hover {
+      background: #b91c1c
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+
+    .success {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #d1fae5;
+      border-left: 4px solid #16a34a;
+      color: #065f46;
+      display: none
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.7
+    }
+
+    .files-section {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px solid var(--border)
+    }
+
+    .file-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 15px
+    }
+
+    .file-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.3s
+    }
+
+    .file-link:hover {
+      border-color: var(--primary);
+      background: rgba(255, 140, 66, 0.05)
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .file-icon {
+      font-size: 20px
+    }
+
+    .file-name {
+      font-weight: 600;
+      font-size: 14px
+    }
+
+    .file-size {
+      font-size: 12px;
+      opacity: 0.6
+    }
+
+    .file-download {
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    @media(max-width:768px) {
+      .detail-grid {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="vanilogo.png" alt="वाणी">
+      <div>
+        <h1 style="font-size:20px;color:var(--primary)">Order Management</h1>
+      </div>
+    </div>
+    <a href="admin-dashboard.html" style="color:var(--text);text-decoration:none;font-weight:600">← Back to
+      Dashboard</a>
+  </header>
+
+  <div class="container">
+    <div class="order-details">
+      <h2 id="orderTitle">Order Details</h2>
+      <div id="orderContent" class="loading">Loading order...</div>
+
+      <div id="adminSection" class="admin-section" style="display:none">
+        <h3 style="color:var(--primary);margin-bottom:20px">Admin Actions</h3>
+
+        <label>Update Status</label>
+        <select id="statusSelect">
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Order Done">Order Done</option>
+        </select>
+
+        <label>Admin Notes (visible to customer)</label>
+        <textarea id="adminNotes" placeholder="Add notes for the customer..."></textarea>
+
+        <div class="btn-group">
+          <button class="btn btn-update" id="updateBtn" onclick="updateOrder()">Update Order</button>
+          <button class="btn btn-delete" onclick="deleteOrder()">Delete Order</button>
+        </div>
+
+        <div id="success" class="success"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D_7UIxAP1AUs",
+      authDomain: "vani-94815.firebaseapp.com",
+      projectId: "vani-94815",
+      storageBucket: "vani-94815.firebasestorage.app",
+      messagingSenderId: "754007126468",
+      appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+      measurementId: "G-1HN0RZKWF5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const admin = sessionStorage.getItem('adminLoggedIn');
+    if (!admin) window.location.href = 'admin-login.html';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const docId = urlParams.get('id');
+
+    let orderData = null;
+
+    async function loadOrderDetails() {
+      try {
+        const orderDoc = await getDoc(doc(db, 'orders', docId));
+
+        if (!orderDoc.exists()) {
+          document.getElementById('orderContent').innerHTML = '<p style="color:#dc2626">Order not found.</p>';
+          return;
+        }
+
+        orderData = orderDoc.data();
+        document.getElementById('orderTitle').textContent = 'Order ' + orderData.orderId;
+
+        let html = `<div class="detail-grid">`;
+        html += `<div class="detail-item"><div class="detail-label">Order ID</div><div class="detail-value">${orderData.orderId}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Customer Name</div><div class="detail-value">${orderData.customerName}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Email</div><div class="detail-value">${orderData.customerEmail}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Phone</div><div class="detail-value">${orderData.customerPhone}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Service</div><div class="detail-value">${orderData.sector}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Quality</div><div class="detail-value">${orderData.quality}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Total Amount</div><div class="detail-value">₹${orderData.totalAmount}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Urgent Delivery</div><div class="detail-value">${orderData.urgentDelivery ? 'Yes' : 'No'}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${orderData.status}</div></div>`;
+        html += `<div class="detail-item"><div class="detail-label">Expected Delivery</div><div class="detail-value">${orderData.expectedDelivery}</div></div>`;
+
+
+        if (orderData.language) html += `<div class="detail-item"><div class="detail-label">Language</div><div class="detail-value">${orderData.language}</div></div>`;
+        if (orderData.projectType) html += `<div class="detail-item"><div class="detail-label">Project Type</div><div class="detail-value">${orderData.projectType}</div></div>`;
+        if (orderData.subject) html += `<div class="detail-item"><div class="detail-label">Subject</div><div class="detail-value">${orderData.subject}</div></div>`;
+        if (orderData.docType) html += `<div class="detail-item"><div class="detail-label">Document Type</div><div class="detail-value">${orderData.docType}</div></div>`;
+        if (orderData.pageCount) html += `<div class="detail-item"><div class="detail-label">Pages/Slides</div><div class="detail-value">${orderData.pageCount}</div></div>`;
+        if (orderData.designType) html += `<div class="detail-item"><div class="detail-label">Design Type</div><div class="detail-value">${orderData.designType}</div></div>`;
+        if (orderData.dimensions) html += `<div class="detail-item"><div class="detail-label">Dimensions</div><div class="detail-value">${orderData.dimensions}</div></div>`;
+        if (orderData.appType) html += `<div class="detail-item"><div class="detail-label">App Type</div><div class="detail-value">${orderData.appType}</div></div>`;
+        if (orderData.platform) html += `<div class="detail-item"><div class="detail-label">Platform</div><div class="detail-value">${orderData.platform}</div></div>`;
+
+        html += `</div>`;
+        html += `<div style="margin-top:20px;padding:15px;background:var(--bg);border:1px solid var(--border);border-radius:10px">`;
+        html += `<div class="detail-label">Project Description</div>`;
+        html += `<div style="margin-top:8px;line-height:1.6">${orderData.description}</div>`;
+        html += `</div>`;
+
+
+        if (orderData.uploadedFiles && orderData.uploadedFiles.length > 0) {
+          html += `<div class="files-section">`;
+          html += `<h3 style="color:var(--primary);margin-bottom:15px">📎 Uploaded Files (${orderData.uploadedFiles.length})</h3>`;
+          html += `<div class="file-list">`;
+
+          orderData.uploadedFiles.forEach(file => {
+            const sizeKB = (file.size / 1024).toFixed(1);
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            const sizeText = file.size > 1024 * 1024 ? `${sizeMB} MB` : `${sizeKB} KB`;
+
+
+            let icon = '📄';
+            if (file.type && file.type.startsWith('image/')) {
+              icon = '🖼️';
+            } else if (file.type && file.type.includes('pdf')) {
+              icon = '📕';
+            } else if (file.type && (file.type.includes('document') || file.type.includes('word'))) {
+              icon = '📝';
+            }
+
+
+            const fileUrl = file.url || file.data;
+            const isBase64 = !!file.data;
+
+            html += `<a href="${fileUrl}" ${isBase64 ? 'download="' + file.name + '"' : 'target="_blank"'} class="file-link">`;
+            html += `  <div class="file-info">`;
+            html += `    <span class="file-icon">${icon}</span>`;
+            html += `    <div>`;
+            html += `      <div class="file-name">${file.name}</div>`;
+            html += `      <div class="file-size">${sizeText}</div>`;
+            html += `    </div>`;
+            html += `  </div>`;
+            html += `  <span class="file-download">${isBase64 ? 'Download ↓' : 'Open ↗'}</span>`;
+            html += `</a>`;
+          });
+
+          html += `</div>`;
+          html += `</div>`;
+        }
+
+        document.getElementById('orderContent').innerHTML = html;
+        document.getElementById('statusSelect').value = orderData.status || 'Pending';
+        document.getElementById('adminNotes').value = orderData.adminNotes || '';
+        document.getElementById('adminSection').style.display = 'block';
+
+
+      } catch (error) {
+        console.error('Load order error:', error);
+        document.getElementById('orderContent').innerHTML = '<p style="color:#dc2626">Error loading order.</p>';
+      }
+    }
+
+    window.updateOrder = async function () {
+      const updateBtn = document.getElementById('updateBtn');
+      updateBtn.disabled = true;
+      updateBtn.textContent = 'Updating...';
+
+      try {
+        const newStatus = document.getElementById('statusSelect').value;
+        const newNotes = document.getElementById('adminNotes').value;
+
+        await updateDoc(doc(db, 'orders', docId), {
+          status: newStatus,
+          adminNotes: newNotes,
+          updatedAt: serverTimestamp()
+        });
+
+        const successDiv = document.getElementById('success');
+        successDiv.textContent = '✓ Order updated successfully!';
+        successDiv.style.display = 'block';
+        setTimeout(() => successDiv.style.display = 'none', 3000);
+
+        updateBtn.disabled = false;
+        updateBtn.textContent = 'Update Order';
+
+      } catch (error) {
+        console.error('Update error:', error);
+        alert('Failed to update order. Please try again.');
+        updateBtn.disabled = false;
+        updateBtn.textContent = 'Update Order';
+      }
+    };
+
+    window.deleteOrder = async function () {
+      if (!confirm('Are you sure you want to delete this order? This cannot be undone.')) {
+        return;
+      }
+
+      try {
+        await deleteDoc(doc(db, 'orders', docId));
+        alert('✓ Order deleted successfully.');
+        window.location.href = 'admin-dashboard.html';
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Failed to delete order. Please try again.');
+      }
+    };
+
+    loadOrderDetails();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    });
+  </script>
+</body>
+
+</html>

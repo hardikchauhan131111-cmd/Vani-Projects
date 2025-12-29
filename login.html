@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <title>Login - वाणी</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",sans-serif}
+    :root{--primary:#ff8c42;--bg:#ffffff;--text:#1a1a1a;--card-bg:#f8f9fa;--border:#e0e0e0}
+    [data-theme="dark"]{--primary:#ff8c42;--bg:#1a1a1a;--text:#ffffff;--card-bg:#2d2d2d;--border:#404040}
+    body{background:linear-gradient(135deg,rgba(255,140,66,0.1) 0%,rgba(255,140,66,0.05) 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;color:var(--text)}
+    .theme-toggle{position:fixed;top:20px;right:20px;background:var(--card-bg);border:2px solid var(--border);border-radius:50px;padding:8px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;z-index:1000}
+    .login-box{background:var(--card-bg);border:2px solid var(--border);border-radius:20px;padding:40px;max-width:400px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.1)}
+    .logo{text-align:center;margin-bottom:30px}
+    .logo img{width:120px}
+    h2{text-align:center;margin-bottom:10px;color:var(--primary)}
+    .subtitle{text-align:center;font-size:14px;opacity:0.7;margin-bottom:30px}
+    label{display:block;margin-top:16px;font-weight:600;font-size:14px;margin-bottom:6px}
+    input{width:100%;padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg);color:var(--text)}
+    input:focus{outline:none;border-color:var(--primary)}
+    .btn-login{background:var(--primary);color:#fff;padding:14px;border:none;border-radius:10px;font-weight:600;font-size:16px;cursor:pointer;width:100%;margin-top:20px}
+    .btn-login:hover{background:#ff7a2e}
+    .btn-login:disabled{opacity:0.5;cursor:not-allowed}
+    .error{margin-top:16px;padding:12px;border-radius:10px;font-size:14px;display:none;background:#fee;border-left:4px solid #c00;color:#900}
+    .links{text-align:center;margin-top:20px;font-size:14px}
+    .links a{color:var(--primary);text-decoration:none;font-weight:600}
+    .links a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <div class="theme-toggle" onclick="toggleTheme()">
+    <span id="themeIcon">🌙</span>
+  </div>
+
+  <div class="login-box">
+    <div class="logo">
+      <img src="vanilogo.png" alt="वाणी">
+    </div>
+    
+    <h2>Welcome Back</h2>
+    <p class="subtitle">Login to your वाणी account</p>
+    
+    <form id="loginForm">
+      <label>Email *</label>
+      <input type="email" id="email" required placeholder="your@email.com">
+
+      <label>Password *</label>
+      <input type="password" id="password" required placeholder="Enter your password">
+
+      <button type="submit" class="btn-login" id="loginBtn">Login</button>
+    </form>
+
+    <div id="error" class="error"></div>
+
+    <div class="links">
+      Don't have an account? <a href="signup.html">Sign Up</a><br>
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D_7UIxAP1AUs",
+  authDomain: "vani-94815.firebaseapp.com",
+  projectId: "vani-94815",
+  storageBucket: "vani-94815.firebasestorage.app",
+  messagingSenderId: "754007126468",
+  appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+  measurementId: "G-1HN0RZKWF5"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+function showError(msg){
+  document.getElementById('error').textContent = msg;
+  document.getElementById('error').style.display = 'block';
+}
+
+document.getElementById('loginForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const loginBtn = document.getElementById('loginBtn');
+  
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Logging in...';
+
+  try {
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where('email', '==', email), where('password', '==', password));
+    const userSnapshot = await getDocs(q);
+
+    if(userSnapshot.empty){
+      showError('Invalid email or password.');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Login';
+      return;
+    }
+
+    const userDoc = userSnapshot.docs[0];
+    const userData = userDoc.data();
+    
+    if(!userData.verified){
+      showError('Please verify your email first.');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Login';
+      return;
+    }
+
+    sessionStorage.setItem('loggedInUser', JSON.stringify({
+      userId: userDoc.id,
+      fullName: userData.fullName,
+      email: userData.email,
+      phone: userData.phone
+    }));
+
+    window.location.href = 'home.html';
+
+  } catch(error){
+    console.error('Login error:', error);
+    showError('Login failed. Please try again.');
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Login';
+  }
+});
+
+function toggleTheme(){
+  const html = document.documentElement;
+  const icon = document.getElementById('themeIcon');
+  if(html.getAttribute('data-theme') === 'dark'){
+    html.removeAttribute('data-theme');
+    icon.textContent = '🌙';
+    localStorage.setItem('theme','light');
+  } else {
+    html.setAttribute('data-theme','dark');
+    icon.textContent = '☀️';
+    localStorage.setItem('theme','dark');
+  }
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('theme') === 'dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+    document.getElementById('themeIcon').textContent = '☀️';
+  }
+});
+</script>
+</body>
+</html>

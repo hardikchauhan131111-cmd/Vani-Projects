@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - वाणी</title>
+    <link rel="icon" type="image/png" href="vanilogo.png">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #ff8c42;
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --card-bg: #f8f9fa;
+            --border: #e0e0e0;
+        }
+
+        [data-theme="dark"] {
+            --primary: #ff8c42;
+            --bg: #1a1a1a;
+            --text: #ffffff;
+            --card-bg: #2d2d2d;
+            --border: #404040;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--card-bg);
+            border-bottom: 2px solid var(--border);
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section img {
+            height: 50px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(255, 140, 66, 0.1) 0%, rgba(255, 140, 66, 0.05) 100%);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-section h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .services-section h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 35px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--text);
+            display: block;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(255, 140, 66, 0.2);
+        }
+
+        .service-card .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .service-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .service-card p {
+            font-size: 13px;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+        .quick-actions {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .quick-actions h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #ff7a2e;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-section">
+            <img src="vanilogo.png" alt="वाणी">
+            <div>
+                <h1 style="font-size: 20px; color: var(--primary);">वाणी</h1>
+                <p style="font-size: 12px; opacity: 0.7;">The Sound of Hard Work</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="pricing.html">💰 Pricing</a>
+            <a href="track.html">📦 Track Order</a>
+            <a href="testimonials.html">⭐ Reviews</a>
+            <a href="portfolio.html">🎨 Portfolio</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Welcome, <span id="userName">User</span>! 👋</h1>
+            <p style="opacity: 0.8; font-size: 16px;">Choose a service below to start your order</p>
+        </div>
+
+        <div class="services-section">
+            <h2>🎯 Our Services</h2>
+            <p style="text-align: center; opacity: 0.7; margin-bottom: 30px;">Click any service to place your order</p>
+            <div class="services-grid">
+                <a href="order.html?sector=coding" class="service-card">
+                    <div class="icon">💻</div>
+                    <h3>Coding & Development</h3>
+                    <p>Python, Java, Full-stack web development, Apps, Games</p>
+                </a>
+
+                <a href="order.html?sector=science" class="service-card">
+                    <div class="icon">🔬</div>
+                    <h3>Science Projects</h3>
+                    <p>Models, experiments, physics, chemistry, biology</p>
+                </a>
+
+                <a href="order.html?sector=research" class="service-card">
+                    <div class="icon">📊</div>
+                    <h3>Research & Reports</h3>
+                    <p>Documentation, PPTs, data analysis, surveys</p>
+                </a>
+
+                <a href="order.html?sector=creative" class="service-card">
+                    <div class="icon">🎨</div>
+                    <h3>Creative Design</h3>
+                    <p>Posters, logos, presentations, graphic design</p>
+                </a>
+
+                <a href="order.html?sector=tech" class="service-card">
+                    <div class="icon">📱</div>
+                    <h3>Tech Accessories</h3>
+                    <p>Small apps, tools, calculators, utilities</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h3>⚡ Quick Actions</h3>
+            <div class="action-buttons">
+                <a href="track.html" class="btn btn-primary">📦 Track My Orders</a>
+                <a href="pricing.html" class="btn btn-secondary">💰 View Pricing</a>
+                <a href="testimonials.html" class="btn btn-secondary">⭐ Leave a Review</a>
+                <button class="btn logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D7UIxAP1AUs",
+            authDomain: "vani-94815.firebaseapp.com",
+            projectId: "vani-94815",
+            storageBucket: "vani-94815.firebasestorage.app",
+            messagingSenderId: "754007126468",
+            appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+            measurementId: "G-1HN0RZKWF5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+        if (!user) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('userName').textContent = user.fullName;
+        }
+
+        window.logout = function () {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('loggedInUser');
+                window.location.href = 'login.html';
+            }
+        };
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Place Order - वाणी</title>
+    <link rel="icon" type="image/png" href="vanilogo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #ff8c42;
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --card-bg: #f8f9fa;
+            --border: #e0e0e0;
+        }
+
+        [data-theme="dark"] {
+            --primary: #ff8c42;
+            --bg: #1a1a1a;
+            --text: #ffffff;
+            --card-bg: #2d2d2d;
+            --border: #404040;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--card-bg);
+            border-bottom: 2px solid var(--border);
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section img {
+            height: 50px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .order-form {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .quality-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .quality-option {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .quality-option:hover {
+            border-color: var(--primary);
+        }
+
+        .quality-option.selected {
+            border-color: var(--primary);
+            background: rgba(255, 140, 66, 0.1);
+        }
+
+        .quality-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .quality-label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+
+        .quality-price {
+            font-size: 18px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .discount-box {
+            background: rgba(255, 140, 66, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .discount-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .discount-input-group input {
+            flex: 1;
+        }
+
+        .btn-apply {
+            background: var(--primary);
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-apply:hover {
+            background: #ff7a2e;
+        }
+
+        .discount-status {
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .file-upload-box {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-box:hover {
+            border-color: var(--primary);
+            background: rgba(255, 140, 66, 0.05);
+        }
+
+        .file-upload-box input {
+            display: none;
+        }
+
+        #fileNames {
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--primary);
+        }
+
+        .file-item {
+            background: rgba(255, 140, 66, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price-summary {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .price-row.total {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary);
+            padding-top: 10px;
+            border-top: 2px solid var(--border);
+        }
+
+        .payment-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .qr-code {
+            max-width: 280px;
+            margin: 20px auto;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            background: var(--bg);
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .qr-code img:active {
+            transform: scale(0.95);
+        }
+
+        .payment-confirm-box {
+            background: rgba(255, 140, 66, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.3);
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: #fff;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background: #ff7a2e;
+            transform: scale(1.02);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error,
+        .success {
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 16px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error {
+            background: #fee;
+            border-left: 4px solid #c00;
+            color: #900;
+        }
+
+        .success {
+            background: #efe;
+            border-left: 4px solid #0c0;
+            color: #060;
+        }
+
+        .urgent-checkbox {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .urgent-checkbox input {
+            width: auto;
+        }
+
+        .payment-instructions {
+            background: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .payment-instructions h4 {
+            color: #0c4a6e;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .payment-instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            font-size: 13px;
+            color: #0c4a6e;
+        }
+
+        @media (max-width: 768px) {
+            .quality-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-section">
+            <img src="vanilogo.png" alt="वाणी">
+            <div>
+                <h1 style="font-size: 20px; color: var(--primary);">वाणी</h1>
+                <p style="font-size: 12px; opacity: 0.7;">The Sound of Hard Work</p>
+            </div>
+        </div>
+        <div>
+            <a href="home.html" style="color: var(--text); text-decoration: none; font-weight: 600;">← Back to
+                Dashboard</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="order-form">
+            <h2>📋 Place Your Order</h2>
+
+            <form id="orderForm">
+                <label>Service <span style="color: #dc2626;">*</span></label>
+                <select id="sector" required>
+                    <option value="">-- Choose a service --</option>
+                    <option value="coding">💻 Coding & Development</option>
+                    <option value="science">🔬 Science Projects</option>
+                    <option value="research">📊 Research & Reports</option>
+                    <option value="creative">🎨 Creative Design</option>
+                    <option value="tech">📱 Tech Accessories</option>
+                </select>
+
+                <div id="dynamicFields"></div>
+
+                <label>Project Description <span style="color: #dc2626;">*</span></label>
+                <textarea id="description" required
+                    placeholder="Describe your project requirements in detail..."></textarea>
+
+                <label>Upload Reference Files (Optional)</label>
+                <div class="file-upload-box" onclick="document.getElementById('fileUpload').click()">
+                    <div style="font-size: 40px; margin-bottom: 10px;">📁</div>
+                    <div style="font-weight: 600;">Click to upload files</div>
+                    <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">PDF, Images, Documents (Max 700 KB per
+                        file)</div>
+                </div>
+                <input type="file" id="fileUpload" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                <div id="fileNames"></div>
+
+                <label>Select Quality Level <span style="color: #dc2626;">*</span></label>
+                <div class="quality-selector">
+                    <div class="quality-option" data-quality="fair" data-price="150">
+                        <input type="radio" name="quality" value="fair" id="fair" required>
+                        <label class="quality-label">Fair</label>
+                        <div class="quality-price">₹150</div>
+                    </div>
+
+                    <div class="quality-option" data-quality="medium" data-price="175">
+                        <input type="radio" name="quality" value="medium" id="medium">
+                        <label class="quality-label">Medium</label>
+                        <div class="quality-price">₹175 <span style="font-size:12px;">(+₹25)</span></div>
+                    </div>
+
+                    <div class="quality-option" data-quality="best" data-price="200">
+                        <input type="radio" name="quality" value="best" id="best">
+                        <label class="quality-label">Best</label>
+                        <div class="quality-price">₹200 <span style="font-size:12px;">(+₹50)</span></div>
+                    </div>
+                </div>
+
+                <div class="urgent-checkbox">
+                    <input type="checkbox" id="urgent">
+                    <label for="urgent" style="margin: 0;">⚡ Urgent Delivery (under 5 days) - Add ₹25</label>
+                </div>
+
+                <div class="discount-box">
+                    <div style="font-weight: 600; margin-bottom: 8px;">🎟️ Have a Discount Code?</div>
+                    <div class="discount-input-group">
+                        <input type="text" id="discountCode" placeholder="Enter discount code">
+                        <button type="button" class="btn-apply" id="applyBtn">Apply</button>
+                    </div>
+                    <div id="discountStatus" class="discount-status"></div>
+                </div>
+
+                <div class="price-summary">
+                    <div class="price-row">
+                        <span>Base Price:</span>
+                        <span id="basePrice">₹150</span>
+                    </div>
+                    <div class="price-row" id="urgentRow" style="display: none;">
+                        <span>Urgent Delivery:</span>
+                        <span>₹25</span>
+                    </div>
+                    <div class="price-row" id="discountRow" style="display: none;">
+                        <span>Discount:</span>
+                        <span id="discountAmount">-₹0</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Total Amount:</span>
+                        <span id="totalPrice">₹150</span>
+                    </div>
+                </div>
+
+                <div class="payment-section">
+                    <h3 style="margin-bottom: 15px;">💳 Payment via UPI</h3>
+                    <p style="font-size: 15px; opacity: 0.8; margin-bottom: 15px;">
+                        Scan QR code with any UPI app to pay <strong
+                            style="color: var(--primary); font-size: 20px;">₹<span id="payAmount">150</span></strong>
+                    </p>
+
+                    <div class="qr-code" id="qrContainer">
+                        <img src="upi.jpeg" alt="UPI Payment QR Code" id="paymentQR">
+                        <p style="font-size: 11px; color: var(--primary); font-weight: bold; margin-top: 10px;">
+                            👆 Click the QR Code after scanning to continue
+                        </p>
+                    </div>
+
+                    <div class="payment-instructions">
+                        <h4>📱 How to Pay:</h4>
+                        <ol>
+                            <li>Open any UPI app (PhonePe, GPay, Paytm, etc.)</li>
+                            <li>Scan the QR code above</li>
+                            <li>Enter amount: ₹<span id="instructionAmount">150</span></li>
+                            <li>Complete the payment</li>
+                            <li>Note down your Transaction ID</li>
+                            <li>Enter Transaction ID below and submit</li>
+                        </ol>
+                    </div>
+
+                    <div class="payment-confirm-box" id="paymentDetails" style="display: none;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="paymentConfirm" required>
+                            <label for="paymentConfirm">
+                                ✅ I have completed the payment of ₹<span id="confirmAmount">150</span> via UPI
+                            </label>
+                        </div>
+                        <label style="margin-top: 5px; margin-bottom: 8px; font-size: 13px;">UPI Transaction ID <span
+                                style="color: #dc2626;">*</span></label>
+                        <input type="text" id="transactionId"
+                            placeholder="Enter 12-digit Transaction ID (e.g., 312456789012)" required
+                            style="margin-bottom: 10px; font-size: 14px; font-weight: 600; letter-spacing: 0.5px;"
+                            maxlength="20" pattern="[0-9]{10,20}">
+                        <p style="font-size: 12px; opacity: 0.7; line-height: 1.6; margin-top: 8px;">
+                            💡 <strong>Where to find Transaction ID:</strong><br>
+                            • Open your UPI app<br>
+                            • Go to Transaction History<br>
+                            • Find the payment you just made<br>
+                            • Copy the Transaction ID / UTR number (usually 12 digits)
+                        </p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn" style="display: none;">
+                    🛒 Submit Order
+                </button>
+            </form>
+
+            <div id="error" class="error"></div>
+            <div id="success" class="success"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkTcVRta2zVKIFMqyRGT9D7UIxAP1AUs",
+            authDomain: "vani-94815.firebaseapp.com",
+            projectId: "vani-94815",
+            storageBucket: "vani-94815.firebasestorage.app",
+            messagingSenderId: "754007126468",
+            appId: "1:754007126468:web:2c5d8627f5336582ddf491",
+            measurementId: "G-1HN0RZKWF5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+        if (!user) {
+            window.location.href = 'login.html';
+        }
+
+        let selectedQualityPrice = 150;
+        let discountValue = 0;
+
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const preSelectedSector = urlParams.get('sector');
+        if (preSelectedSector) {
+            document.getElementById('sector').value = preSelectedSector;
+            updateDynamicFields();
+        }
+
+        function updateDynamicFields() {
+            const sector = document.getElementById('sector').value;
+            const dynamicFields = document.getElementById('dynamicFields');
+
+            const fieldSets = {
+                coding: `
+                    <label>Programming Language</label>
+                    <select id="language" required>
+                        <option value="">-- Select --</option>
+                        <option value="Python">Python</option>
+                        <option value="Java">Java</option>
+                        <option value="HTML/CSS/JS">HTML/CSS/JavaScript</option>
+                        <option value="C++">C++</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <label>Project Type</label>
+                    <select id="projectType" required>
+                        <option value="">-- Select --</option>
+                        <option value="Website">Website</option>
+                        <option value="App">Mobile App</option>
+                        <option value="Game">Game</option>
+                        <option value="Algorithm">Algorithm/Program</option>
+                        <option value="Other">Other</option>
+                    </select>
+                `,
+                science: `
+                    <label>Subject</label>
+                    <select id="subject" required>
+                        <option value="">-- Select --</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Biology">Biology</option>
+                        <option value="General Science">General Science</option>
+                    </select>
+                    <label>Project Type</label>
+                    <select id="projectType" required>
+                        <option value="">-- Select --</option>
+                        <option value="Working Model">Working Model</option>
+                        <option value="Static Model">Static Model</option>
+                        <option value="Experiment">Experiment</option>
+                        <option value="Chart/Poster">Chart/Poster</option>
+                    </select>
+                `,
+                research: `
+                    <label>Document Type</label>
+                    <select id="docType" required>
+                        <option value="">-- Select --</option>
+                        <option value="Report">Project Report</option>
+                        <option value="PPT">PowerPoint Presentation</option>
+                        <option value="Research Paper">Research Paper</option>
+                        <option value="Survey">Survey/Data Analysis</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <label>Number of Pages/Slides</label>
+                    <input type="number" id="pageCount" min="1" required placeholder="e.g., 10">
+                `,
+                creative: `
+                    <label>Design Type</label>
+                    <select id="designType" required>
+                        <option value="">-- Select --</option>
+                        <option value="Poster">Poster</option>
+                        <option value="Logo">Logo Design</option>
+                        <option value="Infographic">Infographic</option>
+                        <option value="Presentation">Presentation Design</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <label>Dimensions/Size</label>
+                    <input type="text" id="dimensions" required placeholder="e.g., A4, 1920x1080px">
+                `,
+                tech: `
+                    <label>Tool/App Type</label>
+                    <select id="appType" required>
+                        <option value="">-- Select --</option>
+                        <option value="Calculator">Calculator/Converter</option>
+                        <option value="Tracker">Tracker/Organizer</option>
+                        <option value="Quiz">Quiz App</option>
+                        <option value="Game">Simple Game</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <label>Platform</label>
+                    <select id="platform" required>
+                        <option value="">-- Select --</option>
+                        <option value="Web">Web-based</option>
+                        <option value="Mobile">Mobile App</option>
+                        <option value="Desktop">Desktop App</option>
+                    </select>
+                `
+            };
+
+            dynamicFields.innerHTML = fieldSets[sector] || '';
+            checkDiscountCodes(sector);
+        }
+
+        document.getElementById('sector').addEventListener('change', updateDynamicFields);
+
+        async function checkDiscountCodes(sector) {
+            const discountStatus = document.getElementById('discountStatus');
+            try {
+                const codesRef = collection(db, 'discountCodes');
+                const q = query(codesRef, where('sector', '==', sector), where('active', '==', true));
+                const snapshot = await getDocs(q);
+
+                if (!snapshot.empty) {
+                    const codes = snapshot.docs.map(doc => doc.data().code).join(', ');
+                    discountStatus.innerHTML = `Available codes: <strong>${codes}</strong>`;
+                    discountStatus.style.color = '#16a34a';
+                } else {
+                    discountStatus.innerHTML = 'Nothing available';
+                    discountStatus.style.color = '#666';
+                }
+            } catch (error) {
+                discountStatus.innerHTML = 'Nothing available';
+                discountStatus.style.color = '#666';
+            }
+        }
+
+        document.querySelectorAll('.quality-option').forEach(option => {
+            option.addEventListener('click', function () {
+                const quality = this.getAttribute('data-quality');
+                const price = parseInt(this.getAttribute('data-price'));
+
+                document.querySelectorAll('.quality-option').forEach(el => el.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById(quality).checked = true;
+
+                selectedQualityPrice = price;
+                calculateTotal();
+            });
+        });
+
+        function calculateTotal() {
+            let total = selectedQualityPrice;
+            document.getElementById('basePrice').textContent = `₹${selectedQualityPrice}`;
+
+            const urgent = document.getElementById('urgent').checked;
+            if (urgent) {
+                total += 25;
+                document.getElementById('urgentRow').style.display = 'flex';
+            } else {
+                document.getElementById('urgentRow').style.display = 'none';
+            }
+
+            total -= discountValue;
+
+
+            document.getElementById('totalPrice').textContent = `₹${total}`;
+            document.getElementById('payAmount').textContent = total;
+            document.getElementById('instructionAmount').textContent = total;
+            document.getElementById('confirmAmount').textContent = total;
+        }
+
+        // Urgent checkbox
+        document.getElementById('urgent').addEventListener('change', calculateTotal);
+
+        // Apply discount
+        document.getElementById('applyBtn').addEventListener('click', async function () {
+            const code = document.getElementById('discountCode').value.trim().toUpperCase();
+            const sector = document.getElementById('sector').value;
+            const status = document.getElementById('discountStatus');
+
+            if (!code) {
+                status.innerHTML = 'Please enter a code';
+                status.style.color = '#f59e0b';
+                return;
+            }
+
+            try {
+                const codesRef = collection(db, 'discountCodes');
+                const q = query(codesRef, where('code', '==', code), where('sector', '==', sector), where('active', '==', true));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    status.innerHTML = 'Invalid or expired code';
+                    status.style.color = '#dc2626';
+                    discountValue = 0;
+                } else {
+                    const discountData = snapshot.docs[0].data();
+                    discountValue = discountData.discountAmount;
+                    status.innerHTML = `✅ Code applied! You saved ₹${discountValue}`;
+                    status.style.color = '#16a34a';
+                    document.getElementById('discountRow').style.display = 'flex';
+                    document.getElementById('discountAmount').textContent = `-₹${discountValue}`;
+                }
+                calculateTotal();
+            } catch (error) {
+                status.innerHTML = 'Error applying code';
+                status.style.color = '#dc2626';
+            }
+        });
+
+        // File upload - display selected files
+        document.getElementById('fileUpload').addEventListener('change', function () {
+            const files = this.files;
+            const fileNames = document.getElementById('fileNames');
+
+            if (files.length > 0) {
+                let html = '<div style="margin-top: 15px;">';
+                for (let i = 0; i < files.length; i++) {
+                    const sizeKB = (files[i].size / 1024).toFixed(1);
+                    const sizeMB = (files[i].size / (1024 * 1024)).toFixed(2);
+                    const sizeText = files[i].size > 1024 * 1024 ? `${sizeMB} MB` : `${sizeKB} KB`;
+                    html += `<div class="file-item">
+                        <span>📎 ${files[i].name}</span>
+                        <span style="font-size: 11px; opacity: 0.7;">${sizeText}</span>
+                    </div>`;
+                }
+                html += '</div>';
+                fileNames.innerHTML = html;
+            } else {
+                fileNames.innerHTML = '';
+            }
+        });
+
+        // Upload files using Base64 encoding (NO Firebase Storage - avoids CORS issues)
+        async function uploadOrderFiles(orderId, files) {
+            const uploadedFiles = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+
+                if (file.size > 700 * 1024) {
+                    const errorMsg = `⚠️ File "${file.name}" is too large (${(file.size / 1024).toFixed(1)}KB). Max limit is 700KB for PDFs/Images.`;
+                    alert(errorMsg);
+                    console.warn(errorMsg);
+                    continue;
+                }
+
+                try {
+
+                    const base64Data = await fileToBase64(file);
+
+                    uploadedFiles.push({
+                        name: file.name,
+                        data: base64Data,
+                        size: file.size,
+                        type: file.type,
+                        uploadedAt: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.error(`Error encoding ${file.name}:`, error);
+
+                }
+            }
+
+            return uploadedFiles;
+        }
+
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+
+        document.getElementById('orderForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const paymentConfirmed = document.getElementById('paymentConfirm').checked;
+            const transactionId = document.getElementById('transactionId').value.trim();
+
+            if (!paymentConfirmed) {
+                document.getElementById('error').textContent = '⚠️ Please confirm that you have completed the payment!';
+                document.getElementById('error').style.display = 'block';
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                setTimeout(() => document.getElementById('error').style.display = 'none', 4000);
+                return;
+            }
+
+            if (!transactionId || transactionId.length < 10) {
+                document.getElementById('error').textContent = '⚠️ Please enter a valid UPI Transaction ID (minimum 10 digits)!';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('transactionId').focus();
+                setTimeout(() => document.getElementById('error').style.display = 'none', 4000);
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Submitting Order...';
+
+            try {
+                const orderId = 'VAN' + Date.now().toString().slice(-8);
+
+
+                let uploadedFiles = [];
+                const fileInput = document.getElementById('fileUpload');
+                if (fileInput.files.length > 0) {
+                    submitBtn.textContent = '📤 Uploading files...';
+                    try {
+                        uploadedFiles = await uploadOrderFiles(orderId, fileInput.files);
+                    } catch (uploadError) {
+                        throw new Error(`File upload failed: ${uploadError.message}`);
+                    }
+                }
+
+                submitBtn.textContent = '⏳ Submitting Order...';
+
+                const orderData = {
+                    orderId: orderId,
+                    userId: user.userId,
+                    customerName: user.fullName,
+                    customerEmail: user.email,
+                    customerPhone: user.phone,
+                    sector: document.getElementById('sector').value,
+                    description: document.getElementById('description').value,
+                    quality: document.querySelector('input[name="quality"]:checked').value,
+                    basePrice: selectedQualityPrice,
+                    urgentDelivery: document.getElementById('urgent').checked,
+                    discount: discountValue,
+                    totalAmount: parseInt(document.getElementById('totalPrice').textContent.replace('₹', '').replace(',', '')),
+                    status: 'Pending',
+                    paymentStatus: 'Pending Verification',
+                    transactionId: transactionId,
+                    paymentMethod: 'UPI - QR Code',
+                    uploadedFiles: uploadedFiles,
+                    expectedDelivery: new Date(Date.now() + (5 * 24 * 60 * 60 * 1000)).toLocaleDateString('en-IN')
+                };
+
+
+                const dynamicInputs = document.getElementById('dynamicFields').querySelectorAll('input, select');
+                dynamicInputs.forEach(input => {
+                    if (input.value) {
+                        orderData[input.id] = input.value;
+                    }
+                });
+
+
+                const cleanOrderData = JSON.parse(JSON.stringify(orderData));
+
+
+                cleanOrderData.createdAt = serverTimestamp();
+
+
+                const ordersRef = collection(db, 'orders');
+                await addDoc(ordersRef, cleanOrderData);
+
+                window.location.href = `success.html?id=${orderId}`;
+            } catch (error) {
+                console.error('Order error:', error);
+                document.getElementById('error').textContent = '❌ Failed to place order. Please try again or contact support.';
+                document.getElementById('error').style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🛒 Submit Order';
+            }
+        });
+
+
+        document.getElementById('paymentQR').addEventListener('click', function () {
+            document.getElementById('paymentDetails').style.display = 'block';
+            document.getElementById('submitBtn').style.display = 'block';
+
+
+            this.style.border = '3px solid var(--primary)';
+            this.style.opacity = '0.7';
+
+
+            setTimeout(() => {
+                document.getElementById('paymentDetails').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        });
+
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login - वाणी</title>
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",sans-serif}
+    :root{--primary:#ff8c42;--bg:#ffffff;--text:#1a1a1a;--card-bg:#f8f9fa;--border:#e0e0e0}
+    [data-theme="dark"]{--primary:#ff8c42;--bg:#1a1a1a;--text:#ffffff;--card-bg:#2d2d2d;--border:#404040}
+    body{background:linear-gradient(135deg,#ff8c42 0%,#ff7a2e 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;color:var(--text)}
+    .admin-box{background:var(--card-bg);border:2px solid var(--border);border-radius:20px;padding:40px;max-width:400px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.3)}
+    .logo{text-align:center;margin-bottom:30px}
+    .logo img{width:100px}
+    h2{text-align:center;margin-bottom:10px;color:var(--primary)}
+    .subtitle{text-align:center;font-size:14px;opacity:0.7;margin-bottom:30px}
+    label{display:block;margin-top:16px;font-weight:600;font-size:14px;margin-bottom:6px}
+    input{width:100%;padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg);color:var(--text)}
+    input:focus{outline:none;border-color:var(--primary)}
+    .btn-login{background:var(--primary);color:#fff;padding:14px;border:none;border-radius:10px;font-weight:600;font-size:16px;cursor:pointer;width:100%;margin-top:20px}
+    .btn-login:hover{background:#ff7a2e}
+    .error{margin-top:16px;padding:12px;border-radius:10px;font-size:14px;display:none;background:#fee;border-left:4px solid #c00;color:#900}
+    .back-link{text-align:center;margin-top:20px;font-size:14px}
+    .back-link a{color:var(--primary);text-decoration:none;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="admin-box">
+    <div class="logo">
+      <img src="vanilogo.png" alt="वाणी">
+    </div>
+    
+    <h2>🔐 Admin Access</h2>
+    <p class="subtitle">Authorized personnel only</p>
+    
+    <form id="adminLoginForm">
+      <label>Username *</label>
+      <input type="text" id="username" required placeholder="Enter admin username">
+
+      <label>Password *</label>
+      <input type="password" id="password" required placeholder="Enter password">
+
+      <button type="submit" class="btn-login" id="loginBtn">Login</button>
+    </form>
+
+    <div id="error" class="error"></div>
+
+    <div class="back-link">
+      <a href="index.html">← Back to Homepage</a>
+    </div>
+  </div>
+
+<script>
+const adminCredentials = {
+  'HARDIK@131111_AVYAA': 'hardik_admin_2025',
+  'AAYUSHMAN@190211_ARANYA': 'aayushman_admin_2025'
+};
+
+function showError(msg){
+  document.getElementById('error').textContent = msg;
+  document.getElementById('error').style.display = 'block';
+}
+
+document.getElementById('adminLoginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  
+  const username = document.getElementById('username').value.trim().toUpperCase();
+  const password = document.getElementById('password').value;
+  const loginBtn = document.getElementById('loginBtn');
+  
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Verifying...';
+
+  setTimeout(() => {
+    if(adminCredentials[username] && adminCredentials[username] === password){
+      sessionStorage.setItem('adminLoggedIn', username);
+      window.location.href = 'admin-dashboard.html';
+    } else {
+      showError('Invalid credentials. Access denied.');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Login';
+    }
+  }, 1000);
+});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('theme') === 'dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+});
+</script>
+</body>
+</html>

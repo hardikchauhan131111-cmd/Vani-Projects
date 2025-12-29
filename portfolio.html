@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio - वाणी</title>
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",sans-serif}
+    :root{--primary:#ff8c42;--bg:#ffffff;--text:#1a1a1a;--card-bg:#f8f9fa;--border:#e0e0e0}
+    [data-theme="dark"]{--primary:#ff8c42;--bg:#1a1a1a;--text:#ffffff;--card-bg:#2d2d2d;--border:#404040}
+    body{background:var(--bg);color:var(--text);min-height:100vh}
+    header{background:var(--card-bg);border-bottom:2px solid var(--border);padding:16px 30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .logo-section{display:flex;align-items:center;gap:15px}
+    .logo-section img{height:50px}
+    .container{max-width:1200px;margin:40px auto;padding:0 20px}
+    h1{color:var(--primary);margin-bottom:30px;font-size:32px;text-align:center}
+    .filter-tabs{display:flex;justify-content:center;gap:15px;flex-wrap:wrap;margin-bottom:40px}
+    .filter-btn{padding:10px 20px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);cursor:pointer;font-weight:600;transition:all 0.3s}
+    .filter-btn:hover,.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:25px}
+    .portfolio-item{background:var(--card-bg);border:2px solid var(--border);border-radius:16px;padding:25px;transition:all 0.3s;cursor:pointer}
+    .portfolio-item:hover{transform:translateY(-8px);border-color:var(--primary);box-shadow:0 12px 40px rgba(255,140,66,0.2)}
+    .item-category{display:inline-block;padding:4px 12px;background:rgba(255,140,66,0.2);color:var(--primary);border-radius:20px;font-size:12px;font-weight:600;margin-bottom:12px}
+    .item-title{font-size:20px;font-weight:700;margin-bottom:10px}
+    .item-desc{font-size:14px;opacity:0.8;line-height:1.6;margin-bottom:15px}
+    .item-tech{display:flex;flex-wrap:wrap;gap:8px}
+    .tech-tag{padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:11px}
+    .empty-state{text-align:center;padding:80px 20px;opacity:0.6}
+    .empty-state-icon{font-size:80px;margin-bottom:20px}
+    footer{background:var(--card-bg);border-top:2px solid var(--border);text-align:center;padding:20px;margin-top:60px;font-size:14px;opacity:0.7}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="vanilogo.png" alt="वाणी">
+      <div>
+        <h1 style="font-size:20px;color:var(--primary)">वाणी</h1>
+        <p style="font-size:12px;opacity:0.7">The Sound of Hard Work</p>
+      </div>
+    </div>
+    <a href="home.html" style="color:var(--text);text-decoration:none;font-weight:600">← Dashboard</a>
+  </header>
+
+  <div class="container">
+    <h1>🎨 Our Portfolio</h1>
+    <p style="text-align:center;opacity:0.8;margin-bottom:30px">Explore our past projects and see what we can create for you</p>
+
+    <div class="filter-tabs">
+      <button class="filter-btn active" onclick="filterPortfolio('all')">All Projects</button>
+      <button class="filter-btn" onclick="filterPortfolio('coding')">Coding</button>
+      <button class="filter-btn" onclick="filterPortfolio('science')">Science</button>
+      <button class="filter-btn" onclick="filterPortfolio('research')">Research</button>
+      <button class="filter-btn" onclick="filterPortfolio('creative')">Creative</button>
+    </div>
+
+    <div id="portfolioContainer" class="portfolio-grid"></div>
+  </div>
+
+  <footer>
+    © 2025 वाणी - The Sound of Hard Work | Contact: angadchauhan131111@gmail.com | +91 9917406009
+  </footer>
+
+<script>
+const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+if(!user) window.location.href = 'index.html';
+
+const portfolioData = [
+  {
+    category: 'coding',
+    title: 'E-Commerce Website',
+    desc: 'Full-stack online shopping platform with payment integration',
+    tech: ['HTML', 'CSS', 'JavaScript', 'Firebase']
+  },
+  {
+    category: 'coding',
+    title: 'Student Management System',
+    desc: 'Python-based desktop application for school administration',
+    tech: ['Python', 'Tkinter', 'SQLite']
+  },
+  {
+    category: 'science',
+    title: 'Solar Power Model',
+    desc: 'Working model demonstrating renewable energy generation',
+    tech: ['Arduino', 'Solar Panel', 'LED']
+  },
+  {
+    category: 'science',
+    title: 'Water Purification System',
+    desc: 'Science exhibition project on water filtration',
+    tech: ['Chemistry', 'Working Model']
+  },
+  {
+    category: 'research',
+    title: 'Climate Change Report',
+    desc: '30-page research paper with data analysis and charts',
+    tech: ['MS Word', 'Excel', 'PowerPoint']
+  },
+  {
+    category: 'research',
+    title: 'Market Survey Analysis',
+    desc: 'Statistical analysis presentation for business studies',
+    tech: ['Data Analysis', 'PPT', 'Charts']
+  },
+  {
+    category: 'creative',
+    title: 'School Event Poster',
+    desc: 'Eye-catching design for annual day celebration',
+    tech: ['Photoshop', 'Illustrator']
+  },
+  {
+    category: 'creative',
+    title: 'NGO Logo Design',
+    desc: 'Professional branding identity for social organization',
+    tech: ['Canva', 'Vector Graphics']
+  }
+];
+
+let currentFilter = 'all';
+
+function renderPortfolio(){
+  const container = document.getElementById('portfolioContainer');
+  const filtered = currentFilter === 'all' ? portfolioData : portfolioData.filter(item => item.category === currentFilter);
+
+  if(filtered.length === 0){
+    container.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-state-icon">📂</div>
+        <p>No projects found in this category.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => `
+    <div class="portfolio-item">
+      <div class="item-category">${item.category.toUpperCase()}</div>
+      <div class="item-title">${item.title}</div>
+      <div class="item-desc">${item.desc}</div>
+      <div class="item-tech">
+        ${item.tech.map(t => `<span class="tech-tag">${t}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+window.filterPortfolio = function(category){
+  currentFilter = category;
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  renderPortfolio();
+};
+
+renderPortfolio();
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('theme') === 'dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+});
+</script>
+</body>
+</html>

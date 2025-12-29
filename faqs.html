@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FAQs - वाणी</title>
+  <link rel="icon" type="image/png" href="vanilogo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",sans-serif}
+    :root{--primary:#ff8c42;--bg:#ffffff;--text:#1a1a1a;--card-bg:#f8f9fa;--border:#e0e0e0}
+    [data-theme="dark"]{--primary:#ff8c42;--bg:#1a1a1a;--text:#ffffff;--card-bg:#2d2d2d;--border:#404040}
+    body{background:var(--bg);color:var(--text);min-height:100vh}
+    header{background:var(--card-bg);border-bottom:2px solid var(--border);padding:16px 30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .logo-section{display:flex;align-items:center;gap:15px}
+    .logo-section img{height:50px}
+    .container{max-width:900px;margin:40px auto;padding:0 20px}
+    h1{color:var(--primary);margin-bottom:30px;font-size:32px;text-align:center}
+    .faq-item{background:var(--card-bg);border:2px solid var(--border);border-radius:12px;padding:25px;margin-bottom:20px;cursor:pointer;transition:all 0.3s}
+    .faq-item:hover{border-color:var(--primary)}
+    .faq-question{font-weight:700;font-size:18px;display:flex;justify-content:space-between;align-items:center}
+    .faq-icon{font-size:24px;transition:transform 0.3s}
+    .faq-item.active .faq-icon{transform:rotate(180deg)}
+    .faq-answer{max-height:0;overflow:hidden;transition:max-height 0.3s;padding-top:0}
+    .faq-item.active .faq-answer{max-height:500px;padding-top:15px}
+    .faq-answer p{line-height:1.8;opacity:0.9}
+    footer{background:var(--card-bg);border-top:2px solid var(--border);text-align:center;padding:20px;margin-top:60px;font-size:14px;opacity:0.7}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="vanilogo.png" alt="वाणी">
+      <div>
+        <h1 style="font-size:20px;color:var(--primary)">वाणी</h1>
+        <p style="font-size:12px;opacity:0.7">The Sound of Hard Work</p>
+      </div>
+    </div>
+    <a href="home.html" style="color:var(--text);text-decoration:none;font-weight:600">← Dashboard</a>
+  </header>
+
+  <div class="container">
+    <h1>❓ Frequently Asked Questions</h1>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>What is वाणी?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>वाणी is a student-focused service platform that helps students from Class 6 to College complete their projects, assignments, and creative work. We provide coding, science projects, research reports, design work, and tech solutions with guaranteed 5-day delivery.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>What services do you offer?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>We offer 5 main categories: <strong>Coding & Development</strong> (Python, Java, websites, apps), <strong>Science Projects</strong> (models, experiments), <strong>Research & Reports</strong> (documentation, PPTs), <strong>Creative Design</strong> (posters, logos), and <strong>Tech Accessories</strong> (small apps, tools).</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>How much does it cost?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Base price starts at ₹150 for Fair quality. Medium quality is ₹175 (+₹25), and Best quality is ₹200 (+₹50). Urgent delivery (under 5 days) adds ₹25. Physical materials for models may have additional costs.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>How long does delivery take?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Standard delivery is <strong>5 days</strong> via email. For urgent delivery (under 5 days), add ₹25. If we're late, we refund ₹25 automatically.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>How do I place an order?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>After logging in, click "Place Order", select your service category, fill in project details, choose quality level, apply any discount codes, and complete payment via UPI. You'll receive an Order ID immediately.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>Can I track my order?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Yes! Use the "Track Order" page and enter your Order ID. You'll see real-time status: Pending, In Progress, or Order Done. Once delivered, you can also leave a review.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>What payment methods do you accept?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>We accept <strong>UPI payments only</strong>. Scan the QR code on the order page to complete payment.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>Can I request changes after delivery?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Yes! You can request edits within 5 days of delivery. Use the "Request Edit" button on the Track Order page, which will send an email to our team with your requirements.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>Do you offer refunds?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>No refunds are provided. However, if we deliver late, we automatically refund ₹25. Edits are free within 5 days based on your quality level (Fair: 1 edit, Medium: 2 edits, Best: unlimited edits).</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>Is the work original?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Yes, all work is created specifically for your order. We do not reuse or resell projects. All work is for <strong>academic guidance and reference purposes only</strong>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>How do discount codes work?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Discount codes are category-specific. After selecting your service, check the discount box for available codes. Enter the code and click "Apply" to get instant savings.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-question">
+        <span>Who are the founders?</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>Hardik Chauhan</strong> (Founder & CEO) and <strong>Aayushman Umrao</strong> (Co-Founder & CFO) manage all operations, quality control, and customer support.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2025 वाणी - The Sound of Hard Work | Contact: angadchauhan131111@gmail.com | +91 9917406009
+  </footer>
+
+<script>
+const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+if(!user) window.location.href = 'index.html';
+
+function toggleFAQ(element){
+  element.classList.toggle('active');
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('theme') === 'dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+});
+</script>
+</body>
+</html>
